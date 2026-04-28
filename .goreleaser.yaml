@@ -1,0 +1,74 @@
+version: 2
+project_name: instantmailcheck
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: instantmailcheck
+    main: ./
+    binary: instantmailcheck
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w
+      - -X main.Version={{ .Version }}
+      - -X main.Commit={{ .Commit }}
+      - -X main.Date={{ .Date }}
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README.md
+      - CHANGELOG.md
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - 'Merge pull request'
+
+release:
+  github:
+    owner: rest-mail
+    name: instantmailcheck
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+
+brews:
+  - name: instantmailcheck
+    repository:
+      owner: antimatter-studios
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/rest-mail/instantmailcheck"
+    description: "Diagnose any mail server in seconds — DNS, SMTP, IMAP, POP3, TLS, DKIM/SPF/DMARC, MTA-STS"
+    license: "MIT"
+    commit_author:
+      name: rest-mail-bot
+      email: noreply@rest-mail.com
+    install: |
+      bin.install "instantmailcheck"
+    test: |
+      assert_match "v#{version}", shell_output("#{bin}/instantmailcheck --version")
