@@ -20,12 +20,12 @@ builds:
       - -X main.Date={{ .Date }}
 
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
     name_template: >-
       {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     files:
       - LICENSE
       - README.md
@@ -54,24 +54,29 @@ release:
   prerelease: auto
   name_template: "v{{ .Version }}"
 
-brews:
+# Was `brews:` (a Homebrew *formula*), which goreleaser deprecated — Homebrew
+# now wants pre-compiled binaries distributed as casks rather than formulae.
+# The generated file therefore moves from Formula/ to Casks/ in the tap, and
+# the install command becomes `brew install --cask`.
+#
+# `install:`/`test:` have no cask equivalent: a cask declares the binary and
+# Homebrew links it, rather than running Ruby to do it.
+homebrew_casks:
   - name: instantmailcheck
     repository:
       owner: antimatter-studios
       name: homebrew-tap
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Formula
+    directory: Casks
     homepage: "https://github.com/rest-mail/instantmailcheck"
-    # Homebrew's `brew audit` rejects a description over 80 characters, and the
-    # generated formula carries a DO-NOT-EDIT banner, so it can only be fixed
-    # here. The previous wording was 89.
+    # `brew audit` rejects a description over 80 characters, and the generated
+    # file carries a DO-NOT-EDIT banner, so it can only be fixed here. The
+    # previous wording was 89.
     description: "Mail server diagnostics — DNS, SMTP, IMAP, POP3, TLS, DKIM/SPF/DMARC, MTA-STS"
     license: "MIT"
+    binaries:
+      - instantmailcheck
     commit_author:
       name: rest-mail-bot
       email: noreply@rest-mail.com
-    install: |
-      bin.install "instantmailcheck"
-    test: |
-      assert_match "v#{version}", shell_output("#{bin}/instantmailcheck --version")
