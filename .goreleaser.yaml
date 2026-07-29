@@ -63,7 +63,10 @@ brews:
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     directory: Formula
     homepage: "https://github.com/rest-mail/instantmailcheck"
-    description: "Diagnose any mail server in seconds — DNS, SMTP, IMAP, POP3, TLS, DKIM/SPF/DMARC, MTA-STS"
+    # Homebrew's `brew audit` rejects a description over 80 characters, and the
+    # generated formula carries a DO-NOT-EDIT banner, so it can only be fixed
+    # here. The previous wording was 89.
+    description: "Mail server diagnostics — DNS, SMTP, IMAP, POP3, TLS, DKIM/SPF/DMARC, MTA-STS"
     license: "MIT"
     commit_author:
       name: rest-mail-bot
