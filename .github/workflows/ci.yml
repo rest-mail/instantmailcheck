@@ -17,3 +17,19 @@ jobs:
       - run: go build ./...
       - run: go vet ./...
       - run: go test ./... -count=1
+
+      # Nothing exercised the release config until a tag was pushed, so
+      # goreleaser deprecations surfaced as a failed release rather than as a
+      # failed pull request. `check` validates the config without building.
+      #
+      # Deliberately a step in this job rather than a job of its own: it is then
+      # covered by the required status check already configured, instead of
+      # needing branch protection updated to require a new one.
+      #
+      # Keep this version constraint identical to the one in release.yml —
+      # validating against a different goreleaser than the one that cuts the
+      # release is what this step exists to prevent.
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2.17'
+          args: check
