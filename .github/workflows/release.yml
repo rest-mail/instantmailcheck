@@ -23,6 +23,8 @@ jobs:
         with:
           version: '~> v2'
           args: release --clean
+        # No tap token: the release no longer writes into the Homebrew tap, so it
+        # needs no credential for any repository but this one. The secret itself
+        # can be deleted from this repository's settings.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}

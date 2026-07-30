@@ -54,29 +54,24 @@ release:
   prerelease: auto
   name_template: "v{{ .Version }}"
 
-# Was `brews:` (a Homebrew *formula*), which goreleaser deprecated — Homebrew
-# now wants pre-compiled binaries distributed as casks rather than formulae.
-# The generated file therefore moves from Formula/ to Casks/ in the tap, and
-# the install command becomes `brew install --cask`.
+# Deliberately no Homebrew section here.
 #
-# `install:`/`test:` have no cask equivalent: a cask declares the binary and
-# Homebrew links it, rather than running Ruby to do it.
-homebrew_casks:
-  - name: instantmailcheck
-    repository:
-      owner: antimatter-studios
-      name: homebrew-tap
-      branch: main
-      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Casks
-    homepage: "https://github.com/rest-mail/instantmailcheck"
-    # `brew audit` rejects a description over 80 characters, and the generated
-    # file carries a DO-NOT-EDIT banner, so it can only be fixed here. The
-    # previous wording was 89.
-    description: "Mail server diagnostics — DNS, SMTP, IMAP, POP3, TLS, DKIM/SPF/DMARC, MTA-STS"
-    license: "MIT"
-    binaries:
-      - instantmailcheck
-    commit_author:
-      name: rest-mail-bot
-      email: noreply@rest-mail.com
+# This used to publish by writing straight into antimatter-studios/homebrew-tap
+# with a token that had write access to it. That tap now reads each project's
+# public releases, computes the checksum of the asset it actually downloaded, and
+# has a person merge the result — so nothing automated can change what
+# `brew install` fetches. See antimatter-studios/homebrew-tap#25.
+#
+# `Formula/instantmailcheck.rb` is therefore maintained in the tap, and picking a
+# formula over a cask is the tap's call to make. It ships this as a formula: a
+# cask would be quarantined by Homebrew, and since these binaries carry only the
+# ad-hoc signature the linker applies, Gatekeeper would kill the first run unless
+# the cask also cleared the attribute — and the call that clears it does not exist
+# on Linux. Nothing quarantines what a formula installs.
+#
+# `goreleaser check` fails on the `brews:` section this replaced, because
+# goreleaser deprecated its formula writer. That only ever constrained a pipeline
+# that pushes the file, which this no longer does.
+#
+# The consequence for this repository: publishing a release is the whole job, and
+# the release needs write access to nothing but itself.
