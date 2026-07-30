@@ -11,12 +11,8 @@ Built and maintained by [rest-mail](https://github.com/rest-mail).
 ### Homebrew (macOS / Linux)
 
 ```bash
-brew install --cask antimatter-studios/tap/instantmailcheck
+brew install antimatter-studios/tap/instantmailcheck
 ```
-
-> Distributed as a cask from v0.1.1 onward. If you installed the older formula,
-> run `brew uninstall instantmailcheck` first — Homebrew does not migrate a
-> formula to a cask automatically.
 
 ### Go
 
