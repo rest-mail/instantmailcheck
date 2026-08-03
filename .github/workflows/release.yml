@@ -32,7 +32,12 @@ jobs:
           version: '~> v2.17'
           args: release --clean
         # No tap token: the release no longer writes into the Homebrew tap, so it
-        # needs no credential for any repository but this one. The secret itself
-        # can be deleted from this repository's settings.
+        # needs no credential for any repository but this one.
+        #
+        # The secret has since been deleted from this repository, and the tap's
+        # CI rejects a formula or cask carrying a generator's DO-NOT-EDIT banner
+        # — which is what a re-added publisher would write. So re-adding one here
+        # fails its own release for want of a credential, and would be caught at
+        # the tap even if it had one.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
