@@ -34,8 +34,8 @@ jobs:
         # No tap token: the release no longer writes into the Homebrew tap, so it
         # needs no credential for any repository but this one.
         #
-        # The secret has since been deleted from this repository. ci.yml fails a
-        # pull request that reintroduces a reference to one, so this stays true
-        # without depending on anyone remembering it.
+        # The secret has since been deleted from this repository, and the tap
+        # rejects anything written into it from elsewhere, so re-adding a
+        # publisher here would fail its own release rather than reach a user.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
